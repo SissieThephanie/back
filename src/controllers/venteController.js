@@ -14,18 +14,36 @@ export const getVentes = async (req, res) => {
 
 export const createVente = async (req, res) => {
     try {
-        const venteData = req.body;
+        // Validation des données requises
+        const { design, prix, quantite } = req.body;
+        
+        if (!design || !prix || !quantite) {
+            return res.status(400).json({ 
+                error: 'Les champs design, prix et quantite sont obligatoires' 
+            });
+        }
+
+        // Conversion des types
+        const venteData = {
+            design,
+            prix: parseFloat(prix),
+            quantite: parseInt(quantite)
+        };
+
         const newVente = await venteService.createVente(venteData);
-        return res.status(201).json(newVente); 
+        return res.status(201).json(newVente);
     } catch (err) {
-        console.error('Erreur lors de la creation des ventes:', err);
-        res.status(500).json({ error: 'Erreur serveur' });
+        console.error('Erreur création vente:', err);
+        res.status(500).json({ 
+            error: err.message,
+            details: err.detail // Pour PostgreSQL
+        });
     }
 };
 
 export const updateVente = async (req, res) => {
     try {
-        const venteId = req.params.id;
+        const venteId = req.params.numproduit;
         const venteData = req.body;
         const updatedVente = await venteService.updateVente(venteData,venteId);
         if (!updatedVente) {
@@ -40,7 +58,7 @@ export const updateVente = async (req, res) => {
 
 export const deleteVente = async (req, res) => {
     try {
-        const venteId = req.params.id;
+        const venteId = req.params.numproduit;
         const deleted = await venteService.deleteVente(venteId);
         if (!deleted) {
             return res.status(404).json({ error: 'Vente non trouvée' });
