@@ -14,13 +14,14 @@ export const createVente = async (venteData) => {
     return rows[0];
 }
 
-export const updateVente = async (venteData,venteId) => {
-    const { design, prix , quantite} = venteData;
-    const rows = await query(
-        "UPDATE ventes SET design = $1, prix = $2, quantite = $3 WHERE numproduit = $4 RETURNING *",
-        [design,prix,quantite , venteId]);
-    return rows[0];
-}
+export const updateVente = async (venteData, venteId) => {
+    const { design, prix, quantite } = venteData;
+    const { rowCount } = await query(
+        "UPDATE ventes SET design = $1, prix = $2, quantite = $3 WHERE numproduit = $4",
+        [design, prix, quantite, venteId]
+    );
+    return rowCount > 0; // true si au moins une ligne a été modifiée
+};
 
 export const deleteVente = async (venteId) => {
     const { rowCount } = await query(

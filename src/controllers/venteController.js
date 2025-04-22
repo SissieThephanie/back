@@ -45,11 +45,14 @@ export const updateVente = async (req, res) => {
     try {
         const venteId = req.params.numproduit;
         const venteData = req.body;
-        const updatedVente = await venteService.updateVente(venteData,venteId);
+        
+        const updatedVente = await venteService.updateVente(venteData, venteId);
+        
         if (!updatedVente) {
             return res.status(404).json({ error: 'Vente non trouvée' });
         }
-        res.status(200).json(updatedVente); 
+        
+        res.status(200).json(updatedVente);
     } catch (err) {
         console.error('Erreur lors de la modification des ventes:', err);
         res.status(500).json({ error: 'Erreur serveur' });
